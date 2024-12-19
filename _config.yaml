@@ -13,12 +13,13 @@
 # you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
-title: "Askr jekyll Demo"
+title: "Askr's blog"
 email: mail@askr.cc
 url: "https://blog.askr.cc"
 
 description: >-
-  目标是并行计算专家.
+  欢迎访问我的个人博客, 这里专注于高性能计算(High-Performance Computing, HPC)领域的知识分享与技术解析。
+  涵盖并行计算、GPU编程等主题。
 
 twitter_username: 0xaskr
 github_username:  0xaskr
@@ -72,7 +73,7 @@ plugins:
   - jekyll-remote-theme
 
 author:
-  name   : "First Lastname"
+  name   : "lain"
   avatar : "/assets/images/bio-photo.jpg"
   bio    : "My awesome biography constrained to a sentence or two goes here."
   links:
@@ -81,10 +82,10 @@ author:
       url: "https://"
     - label: "Twitter"
       icon: "fab fa-fw fa-twitter-square"
-      url: "https://twitter.com/"
+      url: "https://twitter.com/0xaskr"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
-      url: "https://github.com/"
+      url: "https://github.com/0xaskr"
     - label: "Instagram"
       icon: "fab fa-fw fa-instagram"
       url: "https://instagram.com/"
@@ -93,10 +94,10 @@ footer:
   links:
     - label: "Twitter"
       icon: "fab fa-fw fa-twitter-square"
-      url: "https://twitter.com/"
+      url: "https://twitter.com/0xaskr"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
-      url: "https://github.com/"
+      url: "https://github.com/0xaskr"
     - label: "Instagram"
       icon: "fab fa-fw fa-instagram"
       url: "https://instagram.com/"
@@ -113,6 +114,7 @@ defaults:
       comments: true
       share: true
       related: true
+      show_date: true
   # _pages
   - scope:
       path: "_pages"
@@ -127,3 +129,9 @@ category_archive:
 tag_archive:
   type: liquid
   path: /tags/
+
+# Site Settings
+locale                    : "zh-CN"
+minimal_mistakes_skin     : "dirt"
+repository                : "0xaskr/0xaskr.github.io"
+enable_copy_code_button: true
