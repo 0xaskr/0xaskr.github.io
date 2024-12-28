@@ -73,34 +73,21 @@ plugins:
   - jekyll-remote-theme
 
 author:
-  name   : "lain"
+  name   : "askr"
   avatar : "/assets/images/bio-photo.jpg"
-  bio    : "My awesome biography constrained to a sentence or two goes here."
-  links:
-    - label: "Website"
-      icon: "fas fa-fw fa-link"
-      url: "https://"
-    - label: "Twitter"
-      icon: "fab fa-fw fa-twitter-square"
-      url: "https://twitter.com/0xaskr"
-    - label: "GitHub"
-      icon: "fab fa-fw fa-github"
-      url: "https://github.com/0xaskr"
-    - label: "Instagram"
-      icon: "fab fa-fw fa-instagram"
-      url: "https://instagram.com/"
+  bio    : ""
 
 footer:
   links:
+    - label: "Email"
+      icon: "fas fa-fw fa-envelope-square"
+      url: "https://github.com/0xaskr"
     - label: "Twitter"
       icon: "fab fa-fw fa-twitter-square"
       url: "https://twitter.com/0xaskr"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/0xaskr"
-    - label: "Instagram"
-      icon: "fab fa-fw fa-instagram"
-      url: "https://instagram.com/"
 
 defaults:
   # _posts
@@ -112,7 +99,7 @@ defaults:
       author_profile: true
       read_time: true
       comments: true
-      share: true
+      share: false
       related: true
       show_date: true
   # _pages
@@ -129,6 +116,21 @@ category_archive:
 tag_archive:
   type: liquid
   path: /tags/
+
+comments:
+  provider               : "giscus"
+  giscus:
+    repo_id              : "R_kgDONe1rgw"
+    category_name        : "Announcements"
+    category_id          : "DIC_kwDONe1rg84Clkmg"
+    discussion_term      : "pathname"
+    reactions_enabled    : "1"
+    theme                : "preferred_color_scheme"
+    strict               : "0"
+    input_position       : "top"
+    emit_metadata        : "0"
+    lang                 : "zh-CN"
+    lazy                 : "true"
 
 # Site Settings
 locale                    : "zh-CN"
