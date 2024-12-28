@@ -75,13 +75,21 @@ plugins:
 author:
   name   : "askr"
   avatar : "/assets/images/bio-photo.jpg"
-  bio    : ""
-
-footer:
+  bio    : "50%逻辑+30%阅读+20%二次元, 是个乐子人。"
+  location : "Shanghai"
   links:
     - label: "Email"
       icon: "fas fa-fw fa-envelope-square"
+      url: "mailto:mail@askr.cc"
+    - label: "Twitter"
+      icon: "fab fa-fw fa-twitter-square"
+      url: "https://twitter.com/0xaskr"
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
       url: "https://github.com/0xaskr"
+
+footer:
+  links:
     - label: "Twitter"
       icon: "fab fa-fw fa-twitter-square"
       url: "https://twitter.com/0xaskr"
