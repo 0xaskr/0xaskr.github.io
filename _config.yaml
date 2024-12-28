@@ -75,7 +75,8 @@ plugins:
 author:
   name   : "askr"
   avatar : "/assets/images/bio-photo.jpg"
-  bio    : "50%逻辑+30%阅读+20%二次元, 是个码农."
+  bio    : "50%逻辑+30%阅读+20%二次元<br/>
+            是个码农"
   location : "Shanghai"
   links:
     - label: "Email"
