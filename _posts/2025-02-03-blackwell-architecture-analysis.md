@@ -1,10 +1,12 @@
 ---
 title: "5090架构详细分析"
 subtitle: "基于Nvidia GPU Blackwell架构白皮书"
+excerpt: "NVIDIA RTX Blackwell GPU架构深度解析：基于第五代Tensor Cores与DLSS 4的AI渲染革命，GDDR7内存实现1.8TB/s带宽飞跃，全新Mega Geometry技术重塑光线追踪，引领2025高性能游戏与专业图形新标杆。"
 date: 2025-02-03T15:34:30-04:00
 categories:
   - blog
 tags:
+  - rtx5090
   - nvidia
   - architecture-analysis
 ---

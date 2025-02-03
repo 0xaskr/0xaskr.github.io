@@ -75,7 +75,7 @@ plugins:
 author:
   name   : "askr"
   avatar : "/assets/images/bio-photo.jpg"
-  bio    : "50%逻辑+30%阅读+20%二次元<br/>
+  bio    : "50%逻辑+30%好奇心+20%二次元<br/>
             是个码农"
   location : "Shanghai"
   links:
@@ -106,7 +106,7 @@ defaults:
     values:
       layout: single
       author_profile: true
-      read_time: true
+      read_time: false
       comments: true
       share: false
       related: true
