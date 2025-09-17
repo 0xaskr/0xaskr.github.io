@@ -15,7 +15,7 @@
 # in the templates via {{ site.myvariable }}.
 title: "askr's blog"
 email: mail@askr.cc
-url: "https://blog.askr.cc"
+url: "https://blog.askr.dev"
 
 description: >-
   欢迎访问我的个人博客, 这里专注于高性能计算(High-Performance Computing, HPC)领域的知识分享与技术解析。
