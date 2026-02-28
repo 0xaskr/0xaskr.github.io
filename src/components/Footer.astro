@@ -20,9 +20,13 @@ const t = useNavTranslations(lang);
 		{
 			NAV_LINKS.map((link) => {
 				const translation = t(link);
+				let href = `/${lang}${link != "home" ? `/${translation.slug}/` : "/"}`;
+				if (translation.route) {
+					href = `/${lang}${translation.route}`;
+				}
 				return (
 					<a
-						href={`/${lang}/${translation.slug}`}
+						href={href}
 						class="px-2 py-0 hover:text-textColor hover:underline sm:px-4 sm:py-1 text-center"
 					>
 						{translation.text}
