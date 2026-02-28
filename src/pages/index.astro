@@ -1,4 +1,49 @@
 ---
-import { DEFAULT_LANG } from "src/consts";
-return Astro.redirect(`/${DEFAULT_LANG}/`);
+import { DEFAULT_LANG, SUPPORTED_LANGUAGES } from "src/consts";
 ---
+
+<!DOCTYPE html>
+<html lang={DEFAULT_LANG}>
+<head>
+    <meta charset="UTF-8">
+    <title>Redirecting...</title>
+    <!-- Fallback meta refresh for non-JS browsers -->
+    <noscript>
+        <meta http-equiv="refresh" content={`0;url=/${DEFAULT_LANG}/`} />
+    </noscript>
+    <script define:vars={{ defaultLang: DEFAULT_LANG, supportedLangs: Object.keys(SUPPORTED_LANGUAGES) }}>
+        (function() {
+            try {
+                // 1. Check if user has explicitly saved a language preference
+                var storedLang = localStorage.getItem('preferred-lang');
+                if (storedLang && supportedLangs.includes(storedLang)) {
+                    window.location.replace('/' + storedLang + '/');
+                    return;
+                }
+
+                // 2. Try to get browser's preferred language
+                var browserLangs = navigator.languages || [navigator.language || navigator.userLanguage];
+                var targetLang = defaultLang;
+
+                for (var i = 0; i < browserLangs.length; i++) {
+                    var lang = browserLangs[i].toLowerCase();
+                    // Match exact language code like 'zh-CN' or general 'zh'
+                    var langCode = lang.split('-')[0];
+                    if (supportedLangs.includes(langCode)) {
+                        targetLang = langCode;
+                        break;
+                    }
+                }
+
+                // 3. Redirect to the matched language
+                window.location.replace('/' + targetLang + '/');
+            } catch (e) {
+                // Fallback in case of unexpected errors
+                window.location.replace('/' + defaultLang + '/');
+            }
+        })();
+    </script>
+</head>
+<body>
+</body>
+</html>

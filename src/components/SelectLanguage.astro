@@ -47,7 +47,12 @@ let currentLanguage = getLangFromUrl(Astro.url);
             if (select) {
                 select.addEventListener("change", (e) => {
                     if (e.currentTarget instanceof HTMLSelectElement) {
-                        window.location.pathname = e.currentTarget.value;
+                        const selectedPath = e.currentTarget.value;
+                        const match = selectedPath.match(/^\/([a-z]{2})\/?/);
+                        if (match && match[1]) {
+                            localStorage.setItem('preferred-lang', match[1]);
+                        }
+                        window.location.pathname = selectedPath;
                     }
                 });
             }
