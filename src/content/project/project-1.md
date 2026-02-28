@@ -1,14 +1,12 @@
 ---
-title: 'Project 1'
-description: 'Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci'
-pubDate: 'Apr 03 2023'
-heroImage:
-    url: '/blog-placeholder-about.jpg'
-    alt: 'GitHub wallpaper'
-platform: Web
-stack: ['Astro', 'JS']
-website: https://github.com/kirontoo/astro-theme-cody
-github: https://github.com/kirontoo/astro-theme-cody
+title: 'My First Project'
+description: 'A brief description of my first project.'
+pubDate: 'Feb 28 2026'
+stack: ["Astro", "Tailwind CSS"]
+website: 'https://github.com/0xaskr'
+github: 'https://github.com/0xaskr'
 ---
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras faucibus a tortor at molestie. Sed pellentesque leo auctor, auctor lorem nec, venenatis risus. Vivamus commodo ipsum vitae orci finibus, vel porta nunc viverra. In hac habitasse platea dictumst. Nunc pretium, ligula ultricies consequat sollicitudin, enim ex ullamcorper nisl.
+This is my first project! You can use this space to showcase the projects you've worked on, including the technologies used and links to the live site or repository.
+
+You can edit or delete this file (`src/content/project/project-1.md`) to start showcasing your own work.

@@ -9,13 +9,13 @@ import type { SupportedLanguage } from "src/utils/i18n";
 export default {
     "en": {
         "site.title": {
-            text: "Astro Theme Cody"
+            text: "Askr's Blog"
         },
         "site.description": {
-            text: "A minimalist blog theme built with Astro. A quick and easy starter build for anyone who wants to start their own blog."
+            text: "A space for sharing my thoughts on technology, life, and personal projects."
         },
         "profile.description": {
-            text: "your bio description"
+            text: "Software engineer & Technology enthusiast"
         },
         "blog.lastUpdated": {
             text: "Last updated:"
@@ -35,13 +35,13 @@ export default {
     },
     "zh": {
         "site.title": {
-            text: "Astro Theme Cody"
+            text: "Askr 的博客"
         },
         "site.description": {
-            text: "一个基于 Astro 构建的极简博客主题。为你快速搭建个人博客提供简单的入门。"
+            text: "分享关于技术、生活和个人项目的随笔空间。"
         },
         "profile.description": {
-            text: "你的个人简介"
+            text: "软件工程师 & 技术爱好者"
         },
         "blog.lastUpdated": {
             text: "最后更新："

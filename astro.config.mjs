@@ -9,6 +9,7 @@ import icon from "astro-icon";
 // https://astro.build/config
 export default defineConfig({
   site: 'https://blog.askr.dev',
+  prefetch: true,
   integrations: [mdx(), sitemap(), tailwind(), icon()],
 
   // NOTE: Make sure this matches your supported languages in the file: src/consts.ts

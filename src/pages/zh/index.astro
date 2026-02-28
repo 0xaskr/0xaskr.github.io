@@ -47,26 +47,28 @@ const tech: Array<{ title: string; desc: string; href: string }> = [
 		desc: "一款好用的 Astro 图标组件。",
 		href: "https://github.com/natemoo-re/astro-icon#readme",
 	},
+	{
+		title: "Gemini CLI",
+		desc: "通过 Gemini CLI 高效管理和创作内容。",
+		href: "https://github.com/google/gemini-cli",
+	},
 ];
 ---
 
-<BaseLayout title="Home">
+<BaseLayout title="首页">
 	<section>
 		<h1 class="title">Hello World</h1>
 		<p class="mb-4 sm:mb-8">
-			¡Hola a todos! Este es un tema para Astro. Pueden usarlo como blog
-			personal o portafolio. Si quieren saber más sobre cómo
-			personalizarlo y hacerlo suyo, hagan clic en el enlace del ícono de
-			Github que aparece a continuación y los llevará al repositorio.
+			大家好！欢迎来到我的博客。这里是我分享技术见解、生活随笔和各种有趣项目的地方。如果想了解更多关于我的信息或查看我的代码，可以点击下方的图标链接。
 		</p>
 		<div>
-			<span>Puedes encontrarme en:</span>
+			<span>你可以在这里找到我：</span>
 			<SocialMediaLinks />
 		</div>
 	</section>
 
 	<section class="mt-8 sm:mt-16">
-		<h2 class="title">Posts</h2>
+		<h2 class="title">最新文章</h2>
 		<ul class="space-y-4 sm:space-y-2">
 			{
 				filteredPostsByLanguage.map((p) => (
@@ -77,7 +79,7 @@ const tech: Array<{ title: string; desc: string; href: string }> = [
 	</section>
 
 	<section class="mt-16 mb-4">
-		<h2 class="title">Technologies</h2>
+		<h2 class="title">技术栈</h2>
 		<ul class="space-y-4 sm:space-y-2">
 			{
 				tech.map(({ href, title, desc }) => (
@@ -95,10 +97,5 @@ const tech: Array<{ title: string; desc: string; href: string }> = [
 				))
 			}
 		</ul>
-	</section>
-
-	<hr />
-	<section class="">
-		<p>Esto fue traducido usando Google Translate</p>
 	</section>
 </BaseLayout>

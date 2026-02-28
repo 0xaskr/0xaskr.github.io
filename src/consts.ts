@@ -36,7 +36,7 @@ export const siteConfig: Config = {
   description: ui[DEFAULT_LANG]["site.description"].text,
   lang: DEFAULT_LANG,
   profile: {
-    author: "Amy Dang",
+    author: "Askr",
     description: ui[DEFAULT_LANG]["profile.description"].text
   },
   settings: {
@@ -53,7 +53,7 @@ export const SOCIAL_LINKS: Array<SocialLink> = [
   {
     icon: "mdi:github",
     friendlyName: "Github",
-    link: "https://github.com/kirontoo/astro-theme-cody",
+    link: "https://github.com/0xaskr/0xaskr.github.io",
   },
   {
     icon: "mdi:linkedin",
@@ -63,7 +63,7 @@ export const SOCIAL_LINKS: Array<SocialLink> = [
   {
     icon: "mdi:email",
     friendlyName: "email",
-    link: "mailto:ndangamy@gmail.com",
+    link: "mailto:mail@askr.dev",
   },
   {
     icon: "mdi:rss",
