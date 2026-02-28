@@ -1,12 +1,12 @@
 ---
-title: 'My First Project'
-description: 'A brief description of my first project.'
+title: '我的第一个项目'
+description: '我的第一个项目的简短描述。'
 pubDate: 'Feb 28 2026'
-stack: ["Astro", "Tailwind CSS"]
+stack: ["Astro", "Tailwind"]
 website: 'https://github.com/0xaskr'
 github: 'https://github.com/0xaskr'
 ---
 
-This is my first project! You can use this space to showcase the projects you've worked on, including the technologies used and links to the live site or repository.
+这是我的第一个项目！您可以使用这个空间来展示您参与过的项目，包括使用的技术以及项目网站或代码仓库的链接。
 
-You can edit or delete this file (`src/content/project/project-1.md`) to start showcasing your own work.
+您可以编辑或删除这篇文件（`src/content/project/zh/project-1.md`）来开始展示您自己的作品。
