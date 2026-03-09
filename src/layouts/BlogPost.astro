@@ -9,6 +9,7 @@ import CopyBtn from "@/components/CopyBtn";
 import { Icon } from "astro-icon/components";
 import { siteConfig } from "../consts";
 import { getLangFromUrl, useUITranslations } from "@/utils";
+import Comments from "@/components/Comments";
 
 interface Props {
 	post: CollectionEntry<"blog">;
@@ -126,6 +127,7 @@ const articleDate = updatedDate?.toISOString() ?? pubDate.toISOString();
 			<slot />
 		</main>
 		<BackToTopBtn />
+		<Comments />
 	</article>
 	<aside slot="sidebar" class="hidden sm:block">
 		<div class="flex flex-col space-y-2">

@@ -31,6 +31,9 @@ export default {
         },
         "project.website": {
             text: "WEBSITE"
+        },
+        "blog.comments": {
+            text: "Comments"
         }
     },
     "zh": {
@@ -57,6 +60,9 @@ export default {
         },
         "project.website": {
             text: "网站"
+        },
+        "blog.comments": {
+            text: "评论"
         }
     }
 } as const satisfies TranslationUIEntries;
