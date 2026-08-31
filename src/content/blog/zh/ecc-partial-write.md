@@ -5,25 +5,24 @@ pubDate: '2026/8/31'
 tags: ["ECC", "HBM", "Memory", "Kernel", "DMA", "Performance"]
 ---
 
-# ECC 为什么会让一次“小写入”变成“大动作”？
+# ECC Partial Write 如何影响模型设计
 
 本文使用 AI 辅助写作，但作者对文章内容负责。
 
 ## 1. 总结
 
-- **问题**：ECC 校验位保护一组数据 `G`，而不是单个字节。局部写缺少组内旧字节，无法直接生成新 ECC，于是变成 RMW：read old → merge → write full。
-- **原理**：真正昂贵的是为补齐旧数据新增的读流量和读写往返。非对齐写、跨边界写、stride 漂移和分散小写，都会让 partial granule 数 `P` 反复增加。
-- **软件规避**：在请求形成前减少 `P`：对齐 base、`dst_stride`、`write_cols`；主体走完整写；合并同一 `G` 内的小更新；padding 真正写满。
+- **问题**：ECC 校验与计算最小单位是一组数据 `G`，而不是单个字节。Partial Write 没有办法直接生成新 ECC，于是变成 RMW：read old → merge → write full。
+- **原理**：RMW会带来非常大的性能开销，其原因是为保证整块写入，RMW中新增的read old和 wirte full 以及潜在的读写切换带来的开销。非对齐写入、跨边界写入、stride 漂移和小数据分散写入，都会让 Partial Write 数量 `P` 反复增加。
+- **软件规避**：在写入前减少 `P`：对齐 base、`dst_stride`、`last_dim_size`；尽量对齐到最小单位；
 
-本文中的 `G`、128 B/cycle 和 32 B HBM operation 均来自公开模型或示例；落到具体芯片，以目标文档和计数器为准。
+> note: last_dim_size 表示为最低维度的大小(连续存储的维度)
 
 ### 1.1 速查
 
 | 设计项 | 友好区间 | 不友好区间 |
 | --- | --- | --- |
-| 行字节数 | `valid_cols × dtype_bytes` 是 `G` 的整数倍 | 差几个 byte 的 tail |
-| 存储步长 | `dst_stride` 是 `G` 的整数倍 | tight stride 等于行字节数，但不是 `G` 的整数倍 |
-| padding | 分配并且真正写满 | 只分配、不写入 |
+| last dim size | `last_dim_size × dtype_bytes` 是 `G` 的整数倍 | 差几个 byte 的 tail |
+| store_stride | `dst_stride` 是 `G` 的整数倍 | tight stride 等于行字节数，但不是 `G` 的整数倍 |
 | 写入形态 | 连续、对齐、整块写入 | 逐行小 DMA、scatter、partial slice |
 | 更新合并 | 同一 `G` 内的更新合并后一次写出 | 同一 `G` 被多次小 store 反复更新 |
 | `G` 的取值 | 按目标芯片文档确认 | 把总线宽度 128 B 直接当成 `G` |
@@ -35,12 +34,13 @@ tags: ["ECC", "HBM", "Memory", "Kernel", "DMA", "Performance"]
 - 一个 `BF16[8,130]` tile 用 DMA deslice 写回 HBM，逻辑上写 2080 B，但改成连续写或对齐 layout 后，耗时明显不同；
 - 有效写入字节数没变，内存侧读流量却上升；
 - base offset 微调几十字节，性能出现周期性波动；
-- 把 allocation 的 `dst_stride` 从 260 B pad 到 512 B 没用，但真正写满 padding 后变快；
+- 把 allocation 的 `dst_stride` 从 260 B pad 到 512 B 没用，但真正写满 512B 后变快；
 - 逐行小 DMA 比一次连续 DMA 慢得多。
 
 这些现象不等于一定由 ECC 引起，还需要第 5 节的计数器和对照实验确认；但它们是指向 RMW 的典型信号。
 
 ## 3. 原因和原理：以 BF16[8,130] stride store 为例
+本文中的 `G`、总线宽度 和 32 B HBM operation 均来自公开模型或示例；落到具体芯片，以目标文档和计数器为准。
 
 ECC 校验位保护一组 `G` 字节。一次写覆盖整个 `G` 时，控制器拿到全量新数据，直接生成新 ECC；只覆盖一部分时，它先读回旧 `G`，检查纠错后合并新字节，再重算整组 ECC 并写回。Intel 公开的内存控制器文档描述了同样的流程 [1]。
 
@@ -50,11 +50,11 @@ ECC 校验位保护一组 `G` 字节。一次写覆盖整个 `G` 时，控制器
 
 模型设计者只需要三个硬件概念：
 
-1. **128 B cycle**：1024 bit = 128 B，约等于两个常见 cache line。硬件把一次写入看成若干个 128 B 的搬运单位。
+1. **128 B cycle(总线宽度)**：1024 bit = 128 B，约等于两个常见 cache line。硬件把一次写入看成若干个 128 B 的搬运单位。
 2. **byte mask**：每个搬运单位里，哪些字节是本次要写的新值；其余字节必须保留旧值。
 3. **保护粒度 `G`**：ECC 校验位实际保护的字节数。
 
-回到 `BF16[8,130]` deslice：DMA 按行生成 8 条写请求；`dst_stride` 决定下一行起点，`write_cols` 决定每条 DMA 实际写多少。
+回到 `BF16[8,130]` deslice：DMA 按行生成 8 条写请求；`dst_stride` 决定下一行起点，`last_dim_size` 决定每条 DMA 实际写多少。
 
 | deslice 配置 | dst_stride | 每行实际写入 | 第 0 行切出的 128 B cycles |
 | --- | ---: | ---: | --- |
@@ -65,7 +65,7 @@ ECC 校验位保护一组 `G` 字节。一次写覆盖整个 `G` 时，控制器
 
 ![二维 DMA deslice：一个 tile，多条 stride store](/blog/ecc-partial-write/ecc-dma-deslice-stride-store.svg)
 
-图 2：同一个 tile，`dst_stride` 和 `write_cols` 不同，落到 controller 的 partial 数量完全不同。
+图 2：同一个 tile，`dst_stride` 和 `last_dim_size` 不同，落到 controller 的 partial 数量完全不同。
 
 `rows130_tight` 一行是 260 B：前两个 cycle 各 128 B，第三个 cycle 只有 4 B 有效。`dst_stride = 260 B` 时，下一行起点相对 128 B 边界每次移动 4 B：
 

@@ -5,25 +5,24 @@ pubDate: '2026/8/31'
 tags: ["ECC", "HBM", "Memory", "Kernel", "DMA", "Performance"]
 ---
 
-# Why ECC Turns a Small Write into a Big Operation
+# ECC Partial Write and Model Design
 
 This article was written with AI assistance; the author takes full responsibility for its content.
 
 ## 1. Summary
 
-- **The problem**: ECC check bits protect a group of `G` bytes, not a single byte. A partial write lacks the old bytes in the group, so the new ECC cannot be computed directly, and the write becomes an RMW: read old → merge → write full.
-- **The principle**: what costs is the extra read traffic and the read/write round trip needed to recover the old data. Unaligned writes, cross-boundary writes, stride drift, and scattered small writes all keep inflating the partial-granule count `P`.
-- **Software avoidance**: reduce `P` before the requests are formed: align base, `dst_stride`, and `write_cols`; write the bulk as full writes; merge small updates that land in the same `G`; actually write the padding.
+- **The problem**: the smallest unit of ECC checking and computation is a group of `G` bytes, not a single byte. A partial write cannot produce the new ECC directly, so it becomes an RMW: read old → merge → write full.
+- **The principle**: RMW carries a very large performance overhead: to guarantee a whole-block write, it adds a read of the old data, a full write, and the potential read/write turn-around cost. Unaligned writes, cross-boundary writes, stride drift, and scattered small writes all keep inflating the partial-write count `P`.
+- **Software avoidance**: reduce `P` before the write is issued: align base, `dst_stride`, and `last_dim_size`; align to the smallest unit whenever possible.
 
-The `G`, the 128 B/cycle, and the 32 B HBM operation figures in this article come from public models or examples; for a concrete chip, trust its documentation and counters.
+> Note: `last_dim_size` is the size of the lowest (contiguous) dimension.
 
 ### 1.1 Quick reference
 
 | Design item | Friendly range | Unfriendly range |
 | --- | --- | --- |
-| Row bytes | `valid_cols × dtype_bytes` is a multiple of `G` | a tail of a few bytes |
-| Store stride | `dst_stride` is a multiple of `G` | tight stride equals the row bytes but is not a multiple of `G` |
-| Padding | allocated and actually written | allocated but never written |
+| last dim size | `last_dim_size × dtype_bytes` is a multiple of `G` | a tail of a few bytes |
+| store_stride | `dst_stride` is a multiple of `G` | tight stride equals the row bytes but is not a multiple of `G` |
 | Write shape | contiguous, aligned, block writes | per-row small DMAs, scatter, partial slices |
 | Update merging | updates in the same `G` merged into one write | the same `G` repeatedly updated by many small stores |
 | Value of `G` | confirmed from the target chip's documentation | treating the 128 B bus width as `G` |
@@ -35,12 +34,14 @@ If your model shows any of the following, suspect ECC-RMW first:
 - a `BF16[8,130]` tile written back to HBM via DMA deslice writes 2080 B logically, yet switching to a contiguous or aligned layout changes the time noticeably;
 - the effective bytes written stay the same, but read traffic on the memory side goes up;
 - shifting the base offset by a few dozen bytes makes performance fluctuate periodically;
-- padding the allocation's `dst_stride` from 260 B to 512 B doesn't help, but actually writing the padding does;
+- padding the allocation's `dst_stride` from 260 B to 512 B doesn't help, but actually writing the full 512 B does;
 - per-row small DMAs are much slower than one contiguous DMA.
 
 None of these prove ECC is the cause — the counters and control experiments in section 5 are still needed. But they are typical signals pointing at RMW.
 
 ## 3. Cause and principle: the BF16[8,130] stride store
+
+The `G`, the bus width, and the 32 B HBM operation figures in this article come from public models or examples; for a concrete chip, trust its documentation and counters.
 
 ECC check bits protect a group of `G` bytes. When a write covers the whole `G`, the controller gets all the new data and computes the new ECC directly; when it covers only part, the controller reads the old `G` back, checks and corrects it, merges in the new bytes, recomputes the ECC for the whole group, and writes it back. Intel's public memory-controller documentation describes the same flow [1].
 
@@ -50,11 +51,11 @@ Figure 1: A full coverage of `G` produces the new ECC directly; a partial covera
 
 A model designer only needs three hardware concepts:
 
-1. **128 B cycle**: 1024 bit = 128 B, about two common cache lines. Hardware views a write as a number of 128 B transfer units.
+1. **128 B cycle (bus width)**: 1024 bit = 128 B, about two common cache lines. Hardware views a write as a number of 128 B transfer units.
 2. **Byte mask**: within each transfer unit, which bytes are the new values being written; the rest must keep their old values.
 3. **Protection granule `G`**: the number of bytes the ECC check bits actually protect.
 
-Back to the `BF16[8,130]` deslice: the DMA issues 8 row writes; `dst_stride` decides where the next row starts, and `write_cols` decides how much each DMA actually writes.
+Back to the `BF16[8,130]` deslice: the DMA issues 8 row writes; `dst_stride` decides where the next row starts, and `last_dim_size` decides how much each DMA actually writes.
 
 | deslice config | dst_stride | written per row | 128 B cycles cut out of row 0 |
 | --- | ---: | ---: | --- |
@@ -65,7 +66,7 @@ Back to the `BF16[8,130]` deslice: the DMA issues 8 row writes; `dst_stride` dec
 
 ![2-D DMA deslice: one tile, many stride stores](/blog/ecc-partial-write/en/ecc-dma-deslice-stride-store-en.svg)
 
-Figure 2: The same tile, different `dst_stride` and `write_cols` — the number of partials seen by the controller is completely different.
+Figure 2: The same tile, different `dst_stride` and `last_dim_size` — the number of partials seen by the controller is completely different.
 
 A `rows130_tight` row is 260 B: the first two cycles carry 128 B each, and the third carries only 4 B. With `dst_stride = 260 B`, the start of each next row shifts by 4 B relative to the 128 B boundary:
 
