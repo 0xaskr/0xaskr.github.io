@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="820" viewBox="0 0 1200 820" role="img" aria-labelledby="title desc" font-family="Noto Sans">
+  <title id="title">Partial-update paths with ECC completely off vs ECC enabled</title>
+  <desc id="desc">Using the effective granule G as the unit, compare a full coverage, a masked write with physical WDM when ECC is completely off, a read-modify-write when ECC is enabled, and an unaligned update crossing two granules.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#334155"/>
+    </marker>
+    <pattern id="hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="8" height="8" fill="#f8fafc"/>
+      <line x1="0" y1="0" x2="0" y2="8" stroke="#94a3b8" stroke-width="2"/>
+    </pattern>
+    <style>
+      text { font-family: "Noto Sans", "Segoe UI", sans-serif; fill: #0f172a; }
+      .title { font-size: 27px; font-weight: 700; }
+      .subtitle { font-size: 15px; fill: #475569; }
+      .header { font-size: 15px; font-weight: 700; fill: #475569; }
+      .label { font-size: 17px; font-weight: 700; }
+      .small { font-size: 14px; fill: #334155; }
+      .tiny { font-size: 12px; fill: #475569; }
+      .row { stroke: #cbd5e1; stroke-width: 1.2; rx: 12; }
+      .node { stroke: #64748b; stroke-width: 1.3; rx: 8; }
+      .arrow { fill: none; stroke: #334155; stroke-width: 2; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect width="1200" height="820" fill="#f8fafc"/>
+  <text x="600" y="43" text-anchor="middle" class="title">Partial Update: ECC Off vs On Differ Only in Reading Old Data</text>
+  <text x="600" y="72" text-anchor="middle" class="subtitle">G is the controller's effective granule; the 1024-bit AXI teaching model takes G = 128 B, and the real G comes from the target IP</text>
+
+  <text x="55" y="115" class="header">Request shape</text>
+  <text x="315" y="115" class="header">Controller data path</text>
+  <text x="965" y="115" class="header">Simplified traffic</text>
+
+  <rect x="40" y="132" width="1120" height="120" class="row" fill="#f0fdf4"/>
+  <text x="60" y="165" class="label">1. Full coverage of G</text>
+  <text x="60" y="193" class="small">same with ECC off or on</text>
+  <text x="60" y="220" class="tiny">no old bytes to preserve</text>
+  <rect x="315" y="160" width="170" height="62" class="node" fill="#bbf7d0"/>
+  <text x="400" y="187" text-anchor="middle" class="small">new data covers it fully</text>
+  <text x="400" y="210" text-anchor="middle" class="label">G</text>
+  <path d="M485 191 H625" class="arrow"/>
+  <rect x="625" y="160" width="220" height="62" class="node" fill="#dcfce7"/>
+  <text x="735" y="187" text-anchor="middle" class="small">direct write</text>
+  <text x="735" y="210" text-anchor="middle" class="label">WRITE G</text>
+  <text x="965" y="184" class="label">D ≈ G</text>
+  <text x="965" y="214" class="small">A = 1×</text>
+
+  <rect x="40" y="267" width="1120" height="135" class="row" fill="#eff6ff"/>
+  <text x="60" y="302" class="label">2. ECC completely off</text>
+  <text x="60" y="330" class="small">Partial U, physical WDM available</text>
+  <text x="60" y="357" class="tiny">AXI WSTRB pushed down as mask</text>
+  <rect x="315" y="300" width="170" height="65" class="node" fill="#ffffff"/>
+  <rect x="315" y="300" width="52" height="65" rx="8" fill="#93c5fd"/>
+  <rect x="367" y="300" width="118" height="65" fill="#e2e8f0"/>
+  <text x="341" y="338" text-anchor="middle" class="label">U</text>
+  <path d="M485 333 H625" class="arrow"/>
+  <rect x="625" y="300" width="220" height="65" class="node" fill="#dbeafe"/>
+  <text x="735" y="327" text-anchor="middle" class="small">Masked write</text>
+  <text x="735" y="351" text-anchor="middle" class="label">WRITE G</text>
+  <text x="965" y="326" class="label">D ≈ G</text>
+  <text x="965" y="356" class="small">A ≈ G / U</text>
+
+  <rect x="40" y="417" width="1120" height="145" class="row" fill="#fff7ed"/>
+  <text x="60" y="452" class="label">3. ECC enabled</text>
+  <text x="60" y="480" class="small">Partial U, needs a complete granule</text>
+  <text x="60" y="507" class="tiny">uncovered old bytes must be preserved</text>
+  <rect x="315" y="452" width="125" height="65" class="node" fill="#ffedd5"/>
+  <text x="377" y="479" text-anchor="middle" class="small">READ</text>
+  <text x="377" y="503" text-anchor="middle" class="label">G</text>
+  <path d="M440 485 H485" class="arrow"/>
+  <rect x="485" y="452" width="190" height="65" class="node" fill="#fed7aa"/>
+  <text x="580" y="479" text-anchor="middle" class="small">MERGE U + old</text>
+  <text x="580" y="503" text-anchor="middle" class="label">ECC DATA</text>
+  <path d="M675 485 H720" class="arrow"/>
+  <rect x="720" y="452" width="125" height="65" class="node" fill="#ffedd5"/>
+  <text x="782" y="479" text-anchor="middle" class="small">WRITE</text>
+  <text x="782" y="503" text-anchor="middle" class="label">G</text>
+  <text x="965" y="478" class="label">D ≈ 2G</text>
+  <text x="965" y="508" class="small">A ≈ 2G / U</text>
+
+  <rect x="40" y="577" width="1120" height="135" class="row" fill="#fef2f2"/>
+  <text x="60" y="612" class="label">4. Unaligned, across two G</text>
+  <text x="60" y="640" class="small">both granules only partially covered</text>
+  <text x="60" y="667" class="tiny">one logical update becomes two partials</text>
+  <rect x="315" y="610" width="230" height="65" class="node" fill="#dbeafe"/>
+  <text x="430" y="637" text-anchor="middle" class="small">ECC off: 2 × masked writes</text>
+  <text x="430" y="661" text-anchor="middle" class="label">2G</text>
+  <rect x="615" y="610" width="230" height="65" class="node" fill="#fee2e2"/>
+  <text x="730" y="637" text-anchor="middle" class="small">ECC on: 2 × RMW</text>
+  <text x="730" y="661" text-anchor="middle" class="label">4G</text>
+  <text x="965" y="634" class="label">Off ≈ 2G</text>
+  <text x="965" y="664" class="small">On ≈ 4G</text>
+
+  <rect x="40" y="744" width="1120" height="48" rx="10" fill="#ffffff" stroke="#94a3b8"/>
+  <text x="600" y="774" text-anchor="middle" class="label">"Disable" here means ECC completely off; ECC bypass is a different hardware mode, not part of this comparison</text>
+</svg>

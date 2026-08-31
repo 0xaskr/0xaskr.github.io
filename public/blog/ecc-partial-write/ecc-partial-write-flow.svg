@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="730" viewBox="0 0 1200 730" role="img" aria-labelledby="title desc" font-family="Noto Sans CJK SC">
+  <title id="title">完整写与局部写在 ECC 控制器里的分叉</title>
+  <desc id="desc">完整覆盖保护单元 G 时直接生成新 ECC；只覆盖一部分时先读旧数据，检查纠错后合并新字节，再重算 ECC 并写回。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#334155"/>
+    </marker>
+    <style>
+      text { font-family: "Noto Sans CJK SC", "Noto Sans", sans-serif; fill: #0f172a; }
+      .title { font-size: 28px; font-weight: 700; }
+      .subtitle { font-size: 15px; fill: #475569; }
+      .label { font-size: 17px; font-weight: 700; }
+      .small { font-size: 14px; fill: #334155; }
+      .tiny { font-size: 12px; fill: #475569; }
+      .card { stroke: #64748b; stroke-width: 1.4; rx: 12; }
+      .node { stroke: #64748b; stroke-width: 1.3; rx: 9; }
+      .arrow { fill: none; stroke: #334155; stroke-width: 2; marker-end: url(#arrow); }
+      .diamond { stroke: #854d0e; stroke-width: 1.6; fill: #fef9c3; }
+      .branch-yes { font-size: 14px; font-weight: 700; fill: #15803d; }
+      .branch-no { font-size: 14px; font-weight: 700; fill: #b91c1c; }
+    </style>
+  </defs>
+  <rect width="1200" height="730" fill="#f8fafc"/>
+  <text x="600" y="43" text-anchor="middle" class="title">完整写与局部写在 ECC 控制器里的分叉</text>
+  <text x="600" y="71" text-anchor="middle" class="subtitle">完整覆盖 G 时直接生成新 ECC；局部覆盖时先读旧数据，再合并、重算、写回。</text>
+  <rect x="410" y="100" width="380" height="64" class="node" fill="#e0e7ff"/>
+  <text x="600" y="128" text-anchor="middle" class="label">软件提交一次写入</text>
+  <text x="600" y="150" text-anchor="middle" class="small">address · length · byte strobes</text>
+
+  <path d="M600 164 V186" class="arrow"/>
+
+  <polygon points="600,186 870,250 600,314 330,250" class="diamond"/>
+  <text x="600" y="244" text-anchor="middle" class="label">覆盖完整的 ECC 保护单元 G？</text>
+  <text x="600" y="268" text-anchor="middle" class="small">还是只覆盖其中一部分？</text>
+  <text x="322" y="244" text-anchor="end" class="branch-yes">是</text>
+  <text x="878" y="244" text-anchor="start" class="branch-no">否</text>
+
+  <path d="M330 250 C 200 250, 165 300, 165 338" class="arrow"/>
+  <rect x="55" y="348" width="220" height="72" class="node" fill="#dcfce7"/>
+  <text x="165" y="378" text-anchor="middle" class="label">直接计算新 ECC</text>
+  <text x="165" y="400" text-anchor="middle" class="small">无需读取旧数据</text>
+
+  <path d="M870 250 C 920 250, 800 295, 780 336" class="arrow"/>
+  <rect x="700" y="348" width="160" height="72" class="node" fill="#ffedd5"/>
+  <text x="780" y="378" text-anchor="middle" class="label">READ 旧 G</text>
+  <text x="780" y="400" text-anchor="middle" class="small">找回未提供的字节</text>
+
+  <path d="M860 384 H908" class="arrow"/>
+  <rect x="920" y="348" width="200" height="72" class="node" fill="#fed7aa"/>
+  <text x="1020" y="374" text-anchor="middle" class="label">检查 / 纠错旧数据</text>
+  <text x="1020" y="398" text-anchor="middle" class="small">确保旧数据可靠</text>
+
+  <path d="M1020 420 C 1020 472, 780 470, 780 506" class="arrow"/>
+  <rect x="700" y="516" width="160" height="72" class="node" fill="#ffedd5"/>
+  <text x="780" y="546" text-anchor="middle" class="label">合并新字节</text>
+  <text x="780" y="568" text-anchor="middle" class="small">旧值 + 本次更新</text>
+
+  <path d="M860 552 H908" class="arrow"/>
+  <rect x="920" y="516" width="200" height="72" class="node" fill="#fed7aa"/>
+  <text x="1020" y="542" text-anchor="middle" class="label">重算整组 ECC</text>
+  <text x="1020" y="568" text-anchor="middle" class="small">校验位与完整 G 匹配</text>
+
+  <rect x="590" y="630" width="420" height="68" class="card" fill="#bbf7d0"/>
+  <text x="800" y="659" text-anchor="middle" class="label">写入新数据 + 新 ECC</text>
+  <text x="800" y="682" text-anchor="middle" class="small">两条路径最终都产生一次完整写</text>
+
+  <path d="M165 420 C 165 520, 585 570, 580 632" class="arrow"/>
+  <path d="M1020 588 C 1020 610, 980 620, 960 632" class="arrow"/>
+</svg>

@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="730" viewBox="0 0 1200 730" role="img" aria-labelledby="title desc" font-family="Noto Sans">
+  <title id="title">Full write vs partial write inside an ECC controller</title>
+  <desc id="desc">When a write covers the protected granule G completely, new ECC is computed directly. When it covers only part, the controller reads the old data, checks and corrects it, merges in the new bytes, recomputes the ECC, and writes back.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#334155"/>
+    </marker>
+    <style>
+      text { font-family: "Noto Sans", "Segoe UI", sans-serif; fill: #0f172a; }
+      .title { font-size: 28px; font-weight: 700; }
+      .subtitle { font-size: 15px; fill: #475569; }
+      .label { font-size: 17px; font-weight: 700; }
+      .small { font-size: 14px; fill: #334155; }
+      .tiny { font-size: 12px; fill: #475569; }
+      .card { stroke: #64748b; stroke-width: 1.4; rx: 12; }
+      .node { stroke: #64748b; stroke-width: 1.3; rx: 9; }
+      .arrow { fill: none; stroke: #334155; stroke-width: 2; marker-end: url(#arrow); }
+      .diamond { stroke: #854d0e; stroke-width: 1.6; fill: #fef9c3; }
+      .branch-yes { font-size: 14px; font-weight: 700; fill: #15803d; }
+      .branch-no { font-size: 14px; font-weight: 700; fill: #b91c1c; }
+    </style>
+  </defs>
+  <rect width="1200" height="730" fill="#f8fafc"/>
+  <text x="600" y="43" text-anchor="middle" class="title">Full Write vs Partial Write Inside an ECC Controller</text>
+  <text x="600" y="71" text-anchor="middle" class="subtitle">Full coverage of G: compute new ECC directly. Partial coverage: read old data, merge, recompute, write back.</text>
+  <rect x="410" y="100" width="380" height="64" class="node" fill="#e0e7ff"/>
+  <text x="600" y="128" text-anchor="middle" class="label">Software submits a write</text>
+  <text x="600" y="150" text-anchor="middle" class="small">address · length · byte strobes</text>
+
+  <path d="M600 164 V186" class="arrow"/>
+
+  <polygon points="600,186 870,250 600,314 330,250" class="diamond"/>
+  <text x="600" y="244" text-anchor="middle" class="label">Covers the whole ECC granule G?</text>
+  <text x="600" y="268" text-anchor="middle" class="small">or only part of it?</text>
+  <text x="322" y="244" text-anchor="end" class="branch-yes">Yes</text>
+  <text x="878" y="244" text-anchor="start" class="branch-no">No</text>
+
+  <path d="M330 250 C 200 250, 165 300, 165 338" class="arrow"/>
+  <rect x="55" y="348" width="220" height="72" class="node" fill="#dcfce7"/>
+  <text x="165" y="378" text-anchor="middle" class="label">Compute new ECC</text>
+  <text x="165" y="400" text-anchor="middle" class="small">no need to read old data</text>
+
+  <path d="M870 250 C 920 250, 800 295, 780 336" class="arrow"/>
+  <rect x="700" y="348" width="160" height="72" class="node" fill="#ffedd5"/>
+  <text x="780" y="378" text-anchor="middle" class="label">READ old G</text>
+  <text x="780" y="400" text-anchor="middle" class="small">recover missing bytes</text>
+
+  <path d="M860 384 H908" class="arrow"/>
+  <rect x="920" y="348" width="200" height="72" class="node" fill="#fed7aa"/>
+  <text x="1020" y="374" text-anchor="middle" class="label">Verify &amp; correct data</text>
+  <text x="1020" y="398" text-anchor="middle" class="small">make sure it is reliable</text>
+
+  <path d="M1020 420 C 1020 472, 780 470, 780 506" class="arrow"/>
+  <rect x="700" y="516" width="160" height="72" class="node" fill="#ffedd5"/>
+  <text x="780" y="546" text-anchor="middle" class="label">Merge new bytes</text>
+  <text x="780" y="568" text-anchor="middle" class="small">old values + the update</text>
+
+  <path d="M860 552 H908" class="arrow"/>
+  <rect x="920" y="516" width="200" height="72" class="node" fill="#fed7aa"/>
+  <text x="1020" y="542" text-anchor="middle" class="label">Recompute the ECC</text>
+  <text x="1020" y="568" text-anchor="middle" class="small">check bits match the full G</text>
+
+  <rect x="590" y="630" width="420" height="68" class="card" fill="#bbf7d0"/>
+  <text x="800" y="659" text-anchor="middle" class="label">Write new data + new ECC</text>
+  <text x="800" y="682" text-anchor="middle" class="small">both paths end with one full write</text>
+
+  <path d="M165 420 C 165 520, 585 570, 580 632" class="arrow"/>
+  <path d="M1020 588 C 1020 610, 980 620, 960 632" class="arrow"/>
+</svg>

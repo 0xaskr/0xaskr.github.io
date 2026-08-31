@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="640" viewBox="0 0 1200 640" role="img" aria-labelledby="title desc" font-family="Noto Sans">
+  <title id="title">2-D DMA deslice: one tile, many stride stores</title>
+  <desc id="desc">Software DMAs a BF16[8,130] tile to HBM row by row, comparing a tight 260 B stride, a 512 B stride that writes only the valid region, and a 512 B stride that writes the full padding.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#334155"/>
+    </marker>
+    <style>
+      text { font-family: "Noto Sans", "Segoe UI", sans-serif; fill: #0f172a; }
+      .title { font-size: 28px; font-weight: 700; }
+      .subtitle { font-size: 15px; fill: #475569; }
+      .label { font-size: 17px; font-weight: 700; }
+      .small { font-size: 14px; fill: #334155; }
+      .tiny { font-size: 12px; fill: #475569; }
+      .card { stroke: #64748b; stroke-width: 1.4; rx: 12; }
+      .arrow { fill: none; stroke: #334155; stroke-width: 2; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect width="1200" height="640" fill="#f8fafc"/>
+  <text x="600" y="42" text-anchor="middle" class="title">2-D DMA Deslice: One Tile, Many Stride Stores</text>
+  <text x="600" y="70" text-anchor="middle" class="subtitle">BF16[8,130] written to HBM row by row; dst_stride sets each row's start, write_cols sets how much is written</text>
+  <rect x="45" y="100" width="250" height="120" class="card" fill="#e0e7ff"/>
+  <text x="170" y="132" text-anchor="middle" class="label">VMEM tile</text>
+  <text x="170" y="160" text-anchor="middle" class="small">BF16[8, 130]</text>
+  <text x="170" y="184" text-anchor="middle" class="small">8 rows × 260 B = 2080 B</text>
+  <line x1="85" y1="195" x2="255" y2="195" stroke="#93c5fd" stroke-width="1"/>
+  <line x1="85" y1="205" x2="255" y2="205" stroke="#93c5fd" stroke-width="1"/>
+  <text x="170" y="213" text-anchor="middle" class="tiny">deslice: split into 8 row writes</text>
+
+  <path d="M295 160 H365" class="arrow"/>
+
+  <rect x="375" y="100" width="310" height="120" class="card" fill="#fef9c3"/>
+  <text x="530" y="132" text-anchor="middle" class="label">DMA descriptors</text>
+  <text x="530" y="160" text-anchor="middle" class="small">one row store per row</text>
+  <text x="530" y="184" text-anchor="middle" class="small">dst_stride sets the next row's start address</text>
+  <text x="530" y="208" text-anchor="middle" class="tiny">write_cols sets how much each row store writes</text>
+
+  <path d="M530 220 V242" class="arrow"/>
+
+  <rect x="40" y="252" width="345" height="420" class="card" fill="#fef2f2"/>
+  <text x="212" y="285" text-anchor="middle" class="label">rows130_tight</text>
+  <text x="212" y="308" text-anchor="middle" class="small">dst_stride = 260 B, write = 260 B</text>
+  <line x1="70" y1="330" x2="350" y2="330" stroke="#94a3b8"/>
+  <rect x="70" y="345" width="130" height="26" fill="#93c5fd"/>
+  <rect x="72" y="381" width="130" height="26" fill="#93c5fd"/>
+  <rect x="74" y="417" width="130" height="26" fill="#93c5fd"/>
+  <line x1="134" y1="335" x2="134" y2="455" stroke="#f59e0b" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <line x1="198" y1="335" x2="198" y2="455" stroke="#f59e0b" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <text x="212" y="472" text-anchor="middle" class="tiny">row starts drift by 4 B: 0, 4, 8, …</text>
+  <text x="212" y="492" text-anchor="middle" class="tiny">most rows get a partial head &amp; tail</text>
+  <text x="212" y="520" text-anchor="middle" class="tiny">260 B per row = 2 full cycles + 4 B tail</text>
+
+  <rect x="425" y="252" width="345" height="420" class="card" fill="#fffbeb"/>
+  <text x="597" y="285" text-anchor="middle" class="label">rows130_padded_valid</text>
+  <text x="597" y="308" text-anchor="middle" class="small">dst_stride = 512 B, write = 260 B</text>
+  <line x1="455" y1="330" x2="735" y2="330" stroke="#94a3b8"/>
+  <rect x="455" y="345" width="130" height="26" fill="#93c5fd"/>
+  <rect x="455" y="381" width="130" height="26" fill="#93c5fd"/>
+  <rect x="455" y="417" width="130" height="26" fill="#93c5fd"/>
+  <line x1="519" y1="335" x2="519" y2="455" stroke="#f59e0b" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <line x1="583" y1="335" x2="583" y2="455" stroke="#f59e0b" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <text x="597" y="472" text-anchor="middle" class="tiny">each row start realigns to 128 B</text>
+  <text x="597" y="492" text-anchor="middle" class="tiny">but each row still writes 260 B, keeping a 4 B tail</text>
+  <text x="597" y="520" text-anchor="middle" class="tiny">padding allocated but not written keeps the RMW</text>
+
+  <rect x="810" y="252" width="345" height="420" class="card" fill="#f0fdf4"/>
+  <text x="982" y="285" text-anchor="middle" class="label">rows130_padded_full</text>
+  <text x="982" y="308" text-anchor="middle" class="small">dst_stride = 512 B, write = 512 B</text>
+  <line x1="840" y1="330" x2="1120" y2="330" stroke="#94a3b8"/>
+  <rect x="840" y="345" width="256" height="26" fill="#86efac"/>
+  <rect x="840" y="381" width="256" height="26" fill="#86efac"/>
+  <rect x="840" y="417" width="256" height="26" fill="#86efac"/>
+  <line x1="904" y1="335" x2="904" y2="455" stroke="#f59e0b" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <line x1="968" y1="335" x2="968" y2="455" stroke="#f59e0b" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <line x1="1032" y1="335" x2="1032" y2="455" stroke="#f59e0b" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <text x="982" y="472" text-anchor="middle" class="tiny">each row writes the full 512 B: 4 full 128 B cycles</text>
+  <text x="982" y="492" text-anchor="middle" class="tiny">252 B of padding extra, but P = 0</text>
+  <text x="982" y="520" text-anchor="middle" class="tiny">confirm the padding belongs to this buffer</text>
+
+  <rect x="220" y="560" width="760" height="52" rx="10" fill="#ffffff" stroke="#94a3b8"/>
+  <text x="600" y="584" text-anchor="middle" class="label">Same BF16[8,130] deslice: dst_stride &amp; write_cols decide if RMW repeats per row</text>
+  <text x="600" y="604" text-anchor="middle" class="tiny">count P across all 8 rows, not just one row</text>
+
+</svg>
