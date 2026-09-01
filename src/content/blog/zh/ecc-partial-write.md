@@ -1,5 +1,5 @@
 ---
-title: 'ECC 为什么会让一次“小写入”变成“大动作”？'
+title: 'ECC Partial Write 如何影响模型设计 ？'
 description: '为什么 ECC 开启后，几字节的局部写会变成一次完整的读-改-写？从 BF16[8,130] DMA deslice 讲起：RMW 的原理、代价，以及软件侧的规避方法。'
 pubDate: '2026/8/31'
 tags: ["ECC", "HBM", "Memory", "Kernel", "DMA", "Performance"]

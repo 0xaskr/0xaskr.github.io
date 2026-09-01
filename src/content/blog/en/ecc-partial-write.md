@@ -1,5 +1,5 @@
 ---
-title: 'Why ECC Turns a Small Write into a Big Operation'
+title: 'ECC Partial Write and Model Design'
 description: 'Why does a few-byte partial write become a full read-modify-write once ECC is on? A walk through RMW using a BF16[8,130] DMA deslice: the principle, the cost, and how software avoids it.'
 pubDate: '2026/8/31'
 tags: ["ECC", "HBM", "Memory", "Kernel", "DMA", "Performance"]
