@@ -3,13 +3,8 @@ import { getLangFromSlug, type SupportedLanguage } from "./i18n";
 
 export async function getAllPosts(filterHidden: boolean = false) {
 	return await getCollection("blog", ({ data }) => {
-		if (import.meta.env.PROD) {
-			if (filterHidden) {
-				return !data.hide;
-			}
-
-			// on production: exclude draft posts by default
-			return !data.draft;
+		if (import.meta.env.PROD && data.draft) {
+			return false;
 		}
 
 		return filterHidden ? !data.hide : true;
