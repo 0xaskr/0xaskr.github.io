@@ -220,31 +220,6 @@ Pallas 的 GPU 路径按配置选择 Mosaic GPU、Triton 或已注册的平台�
 
 更细的对象关系见 [Pallas 内外层程序说明](https://github.com/0xaskr/jax-source-analysis/blob/113cb22d90a64f09fddf2e8ee77259efa4d18ad0/research/software-stack/jax/jaxpr-centered-hub.md#pallas)和 [Jaxpr 详细图](https://github.com/0xaskr/jax-source-analysis/blob/113cb22d90a64f09fddf2e8ee77259efa4d18ad0/research/software-stack/jax/jaxpr-centered-hub.svg#inner_jaxpr)。
 
-## 5. 源码版本和图的维护
-
-### 5.1 本文使用的源码
-
-JAX 固定在 `361c43e072cce92b7d3e9bdaf4dd16db26c49043`，XLA 固定在 `dcf304bc5dca1932b99f740b911dbd73631a1a69`。文中的源码链接指向这些固定提交，其他依赖以 [`upstream-sources.lock`](https://github.com/0xaskr/jax-source-analysis/blob/113cb22d90a64f09fddf2e8ee77259efa4d18ad0/upstream-sources.lock)、[`source-archives.lock`](https://github.com/0xaskr/jax-source-analysis/blob/113cb22d90a64f09fddf2e8ee77259efa4d18ad0/source-archives.lock) 和[环境锁](https://github.com/0xaskr/jax-source-analysis/blob/113cb22d90a64f09fddf2e8ee77259efa4d18ad0/env/environment.lock.json)为准。
-
-在线文档用于补充概念和使用方式，具体类、函数与调用顺序以工作区固定源码为准。对照实际运行结果时，应同时核对运行时二进制版本；与所引用源码不一致的结果标记为 `VERSION-SKEW`。
-
-### 5.2 重建配套图
-
-[分层图](/blog/jax-software-stack/overview-software-stack-components-layered.svg)由 [`render_overview_software_stack_flows.py`](https://github.com/0xaskr/jax-source-analysis/blob/113cb22d90a64f09fddf2e8ee77259efa4d18ad0/tools/render_overview_software_stack_flows.py) 生成，节点和核心抽象的配置在 [`software_stack_overview_flow_data.py`](https://github.com/0xaskr/jax-source-analysis/blob/113cb22d90a64f09fddf2e8ee77259efa4d18ad0/tools/software_stack_overview_flow_data.py) 中。[扩展接口图](https://github.com/0xaskr/jax-source-analysis/blob/113cb22d90a64f09fddf2e8ee77259efa4d18ad0/research/software-stack/overview/overview-software-stack-components-extended.svg)由 [`render_overview_software_stack_extensions.py`](https://github.com/0xaskr/jax-source-analysis/blob/113cb22d90a64f09fddf2e8ee77259efa4d18ad0/tools/render_overview_software_stack_extensions.py) 生成。
-
-在仓库根目录运行：
-
-```bash
-python3 -B tools/diagram_environment.py run tools/render_overview_software_stack_flows.py
-python3 -B tools/diagram_environment.py run tools/render_overview_software_stack_extensions.py
-```
-
-两个命令分别更新对应的 SVG。需要先预览时，可以在命令末尾加 `--output-dir /tmp/jax-stack-preview`。旧的 [`render_overview_software_stack_components.py`](https://github.com/0xaskr/jax-source-analysis/blob/113cb22d90a64f09fddf2e8ee77259efa4d18ad0/tools/render_overview_software_stack_components.py) 命令入口仍转交分层图生成器。
-
-生成器检查固定源码锚点和绘图结构。所需源码不在本地检出中时，使用 [`overview_flow_sources.json`](https://github.com/0xaskr/jax-source-analysis/blob/113cb22d90a64f09fddf2e8ee77259efa4d18ad0/tools/overview_flow_sources.json) 记录的提交和 SHA-256 校验缓存；缺少缓存时，可用 `--fetch-sources` 获取相应文件。绘图依赖由 [`env/diagrams.lock.json`](https://github.com/0xaskr/jax-source-analysis/blob/113cb22d90a64f09fddf2e8ee77259efa4d18ad0/env/diagrams.lock.json) 锁定。
-
-修改组件职责或调用关系时，需要同时检查正文、节点配置和图中的连线说明。正文使用组件名、对象名和函数名描述流程，可以单独阅读；图用于查看这些关系在整体架构中的位置。
-
 [src-buffer-assignment]: https://github.com/openxla/xla/blob/dcf304bc5dca1932b99f740b911dbd73631a1a69/xla/service/buffer_assignment.h#L476
 [src-cpu-backend]: https://github.com/openxla/xla/blob/dcf304bc5dca1932b99f740b911dbd73631a1a69/xla/service/cpu/cpu_compiler.cc#L2139
 [src-cpu-execute]: https://github.com/openxla/xla/blob/dcf304bc5dca1932b99f740b911dbd73631a1a69/xla/pjrt/cpu/cpu_client.cc#L1602
